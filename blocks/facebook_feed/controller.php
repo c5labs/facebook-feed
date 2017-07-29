@@ -329,6 +329,13 @@ class Controller extends BlockController
      */
     public function save($data)
     {
+        $expensiveCache = \Core::make('cache/expensive');
+        $postCacheItem = $expensiveCache->getItem('FacebookFeed/Posts' . $this->bID);
+
+        if (!$postCacheItem->isMiss()) {
+            $postCacheItem->clear();
+        }
+
         parent::save($data);
     }
 
@@ -450,6 +457,13 @@ class Controller extends BlockController
 
             // Format the posts
             foreach ($posts as $k => $post) {
+
+                // Remove posts that we can't display.
+                if (empty($posts[$k]['message']) && empty($posts[$k]['full_picture'])) {
+                    unset($posts[$k]);
+                    continue;
+                }
+
                 // Linkify
                 if (! empty($posts[$k]['message'])) {
                     $posts[$k]['message'] = preg_replace(
@@ -469,6 +483,8 @@ class Controller extends BlockController
                     $posts[$k]['video'] = $video;
                 }*/
             }
+
+            $posts = array_values($posts);
 
             $postCacheItem->set($posts, $this->getCacheTtl($provider)); 
         } else {

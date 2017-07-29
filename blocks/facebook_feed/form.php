@@ -53,7 +53,7 @@ defined('C5_EXECUTE') or die('Access Denied.');
     <?php foreach ($pages as $page) { ?>
         <div class="col-xs-12">
             <div class="card">
-                <input type="radio" name="object_id" id="<?php echo $page['id']; ?>" value="<?php echo $page['id']; ?> <?php echo (isset($object_id) && $page['id'] === $object_id) ? 'checked="checked"' : '' ?>">
+                <input type="radio" name="object_id" id="<?php echo $page['id']; ?>" value="<?php echo $page['id']; ?>" <?php echo (isset($object_id) && intval($page['id']) === intval($object_id)) ? 'checked="checked"' : '' ?>">
                 <label for="<?php echo $page['id']; ?>">
                     <div class="img-div" style="background-image: url(<?php echo $page['picture']['data']['url']; ?>);" alt="<?php echo $page['name']; ?>"></div>
                     <?php echo $page['name']; ?>

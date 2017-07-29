@@ -44,7 +44,7 @@ if (isset($no_configuration)) { ?>
      */
     if (count($posts) > 0) {
     foreach ($posts as $post) { ?>
-
+    <div class="col-md-12">
         <div class="facebook-feed-post <?php echo $post['type'] ?>">
             <?php if (isset($post['full_picture'])) { ?>
                 <img src="<?php echo $post['full_picture'] ?>" alt="<?php echo $post['message'] or '' ?>">
@@ -52,9 +52,9 @@ if (isset($no_configuration)) { ?>
             <?php if (isset($post['message'])) { ?>
                 <p style="<?php echo empty($post['full_picture']) ? 'font-size: 1.5em; line-height: 1.5em;' : '' ?>"><?php echo $post['message'] ?></p>
             <?php } ?>
-            <span class="post-meta"><?php echo $post['human_date'] ?></span>
+            <span class="facebook-feed-post-meta"><?php echo $post['human_date'] ?></span>
         </div>    
-
+    </div>
     <?php } ?>
     <?php } else { ?>
         <span>There are no posts to display.</span>
