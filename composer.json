@@ -1,0 +1,23 @@
+{
+    "name": "c5labs/facebook-feed",
+    "description": "Shows a persons or pages Facebook posts in an elegant way.",
+    "type": "concrete5-package",
+    "license": "MIT",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/boxedcode/Authify"
+        }
+    ],
+    "authors": [
+        {
+            "name": "Oliver Green",
+            "email": "oliver@c5labs.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "composer/installers": "^1.0",
+        "boxed-code/authify": "dev-master"
+    }
+}
