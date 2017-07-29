@@ -453,7 +453,7 @@ class Controller extends BlockController
                 ]);
             }
 
-            $posts = $feed['data'];
+            $posts = is_array($feed['data']) ? $feed['data'] : [];
 
             // Format the posts
             foreach ($posts as $k => $post) {

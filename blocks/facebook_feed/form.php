@@ -50,6 +50,7 @@ defined('C5_EXECUTE') or die('Access Denied.');
         </div>
     </div>
     <div class="row">
+    <?php if (count($pages) > 0) { ?>
     <?php foreach ($pages as $page) { ?>
         <div class="col-xs-12">
             <div class="card">
@@ -59,6 +60,11 @@ defined('C5_EXECUTE') or die('Access Denied.');
                     <?php echo $page['name']; ?>
                 </label>
             </div>
+        </div>
+    <?php } ?>
+    <?php } else { ?>
+        <div class="col-xs-12">
+            <p>You have no pages associated with your account.</p>
         </div>
     <?php } ?>
     </div>

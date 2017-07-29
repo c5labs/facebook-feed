@@ -14,3 +14,13 @@
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
 }
+
+.facebook-feed-post { 
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 30px;
+    margin-bottom: 30px;
+}
+
+.facebook-feed-post:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+.facebook-feed-post img { margin-bottom: 20px; }
+.facebook-feed-post .post-meta { color: #ccc; }
