@@ -24,3 +24,23 @@
 .facebook-feed-post:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
 .facebook-feed-post img { margin-bottom: 20px; }
 .facebook-feed-post .post-meta { color: #ccc; }
+
+.facebook-feed-post .owl-carousel .item { min-height: 300px; }
+.facebook-feed-post .owl-carousel .item > div { 
+    position: absolute; top:0; left:0; right:0; bottom:0; 
+    background-size: cover; 
+    background-position: center; z-index: 1
+}
+
+.facebook-feed-post.video .volume-control-wrapper { 
+        position: absolute;
+        bottom: 10px; left: 20px;
+        color: rgba(255, 255, 255, 0.7);
+        cursor: pointer;
+        width: 25px;
+
+        @media (max-width: $screen-sm-max) {
+            display: none;
+        }
+    }
+}

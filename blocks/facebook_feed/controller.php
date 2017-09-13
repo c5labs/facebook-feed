@@ -407,6 +407,11 @@ class Controller extends BlockController
         ));
     }
 
+    public function registerViewAssets($outputContent = '')
+    {
+        $this->requireAsset('container.player');
+    }
+
     protected function getAvailablePostSources()
     {
         $provider = Core::make('authify.manager')->get('facebook-feed');
@@ -444,13 +449,15 @@ class Controller extends BlockController
 
             $provider = Core::make('authify.manager')->get('facebook-feed');
             
+            $options =  [
+                'fields' => 'full_picture,message,name,created_time,link,source,type,object_id,attachments',
+            ];
+
             // Get the pages that the user owns.
             if ('me' === $this->object_id) {
-                $feed = $provider->getUserFeed($this->object_id);
+                $feed = $provider->getUserFeed($this->object_id, $options);
             } else {
-                $feed = $provider->request('https://graph.facebook.com/' . trim($this->object_id) . '/posts', [
-                    'fields' => 'full_picture,message,name,created_time,link,source,type,object_id',
-                ]);
+                $feed = $provider->request('https://graph.facebook.com/' . trim($this->object_id) . '/posts', $options);
             }
 
             $posts = is_array($feed['data']) ? $feed['data'] : [];
@@ -475,13 +482,22 @@ class Controller extends BlockController
                 // Date
                 $posts[$k]['human_date'] = with(new Carbon($post['created_time']))->diffForHumans();
 
-                // Add the video data
-                /*if ('video' === $posts[$k]['type']) {
-                    $video = head(array_filter($videos, function($item) use ($post) { 
-                        return $item['id'] === $post['object_id']; 
-                    }));
-                    $posts[$k]['video'] = $video;
-                }*/
+                // Move multiple images somewhere sensible.
+                if (isset($posts[$k]['attachments']['data'][0]) && isset($posts[$k]['attachments']['data'][0]['subattachments'])) {
+                    $images = [];
+
+                    $attachments = $posts[$k]['attachments']['data'][0]['subattachments']['data'];
+
+                    foreach ($attachments as $attachment) {
+                        if ('photo' === $attachment['type']) {
+                            $images[] = $attachment['media']['image']['src'];
+                        }
+                    }
+
+                    if (count($images) > 1) {
+                        $posts[$k]['parsed_images'] = $images;
+                    }
+                }
             }
 
             $posts = array_values($posts);

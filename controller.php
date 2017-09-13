@@ -7,13 +7,15 @@
  */
 namespace Concrete\Package\FacebookFeed;
 
+use BlockType;
+use Concrete\Core\Asset\Asset;
+use Concrete\Core\Asset\AssetList;
 use Concrete\Core\Attribute\Key\CollectionKey;
 use Concrete\Core\Attribute\Type;
 use Concrete\Core\Foundation\Service\ProviderList;
 use Concrete\Core\Package\Package;
 use Concrete\Core\Page\Single as SinglePage;
 use Core;
-use BlockType;
 use Illuminate\Filesystem\Filesystem;
 
 defined('C5_EXECUTE') or die('Access Denied.');
@@ -161,6 +163,9 @@ class Controller extends Package
         // Register defined service providers
         $this->registerServiceProviders();
 
+        // Register our assets with the pipeline.
+        $this->registerAssets();
+
         // Add custom logic here that needs to be executed during CMS boot, things
         // such as registering services, assets, etc.
     }
@@ -233,5 +238,65 @@ class Controller extends Package
         parent::uninstall();
 
         // Add your custom logic here that needs to be executed AFTER package uninstall.
+    }
+
+    protected function registerAssets()
+    {
+        $al = AssetList::getInstance();
+
+        // Container player
+        $al->register(
+                'css', 'container.player/css', 'node_modules/container.player/dist/container.player.min.css',
+                array(
+                    'version' => '0.9.1', 'position' => Asset::ASSET_POSITION_HEADER, 
+                    'minify' => true, 'combine' => false
+                ), $this
+        );
+
+        $al->register(
+                'javascript', 'container.player/js', 'node_modules/container.player/dist/container.player.min.js',
+                array(
+                    'version' => '0.9.1', 'position' => Asset::ASSET_POSITION_FOOTER, 
+                    'minify' => true, 'combine' => false
+                ), $this
+        );
+
+        $al->registerGroup(
+            'container.player',
+            array(
+                array('css', 'container.player/css'), 
+                array('javascript', 'container.player/js'),
+                array('javascript', 'jquery')
+            )
+        );
+
+        // Owl Carousel
+        $al->register(
+                'css', 'owl.carousel/css', array(
+                    'node_modules/owl.carousel/dist/assets/owl.carousel.min.css',
+                    'node_modules/owl.carousel/dist/assets/owl.theme.default.min.css',
+                ),
+                array(
+                    'version' => '2.2.0', 'position' => Asset::ASSET_POSITION_HEADER, 
+                    'minify' => true, 'combine' => false
+                ), $this
+        );
+
+        $al->register(
+                'javascript', 'owl.carousel/js', 'node_modules/owl.carousel/dist/owl.carousel.min.js',
+                array(
+                    'version' => '2.2.0', 'position' => Asset::ASSET_POSITION_FOOTER, 
+                    'minify' => true, 'combine' => false
+                ), $this
+        );
+
+        $al->registerGroup(
+            'owl.carousel',
+            array(
+                array('css', 'owl.carousel/css'), 
+                array('javascript', 'owl.carousel/js'),
+                array('javascript', 'jquery')
+            )
+        );
     }
 }

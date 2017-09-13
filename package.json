@@ -1,0 +1,15 @@
+{
+  "name": "facebook_feed",
+  "version": "0.9.0",
+  "description": "Facebook post feed for concrete5.",
+  "main": "auto.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Oliver Green <oliver@boxedcode.co.uk",
+  "license": "MIT",
+  "dependencies": {
+    "container.player": "^0.9.1",
+    "owl.carousel": "^2.2.0"
+  }
+}
