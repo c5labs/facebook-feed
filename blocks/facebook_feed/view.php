@@ -47,10 +47,12 @@ if (isset($no_configuration)) { ?>
 
         <div class="facebook-feed-post <?php echo $post['type'] ?>">
             <?php if ('video' === $post['type']) { ?>
+                <?php if (!empty($post['source'])) { ?>
                 <div class="video-wrapper">
                     <div class="video container-player" data-src="<?php echo $post['source']; ?>" data-cover="<?php echo $post['full_picture']; ?>"></div>
                     <div class="volume-control-wrapper"><i class="fa fa-volume-off fa-2x volume-control"></i></div>
                 </div>
+                <?php } ?>
             <?php } elseif (isset($post['parsed_images'])) { ?>
                 <div class="owl-carousel owl-theme">
                     <?php foreach ($post['parsed_images'] as $image) { ?>
