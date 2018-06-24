@@ -86,6 +86,29 @@
         });
     };
 
+
+    function updateSize(e){
+        var $items = $(e.relatedTarget.$stage).find('.owl-item .item img');
+        console.log($items);
+        var maxHeight=parseInt($items.eq(0).css('height'));
+        $items.each(function () {
+            var thisHeight = parseInt($(this).css('height'));
+            maxHeight=(maxHeight>=thisHeight?maxHeight:thisHeight);
+        });
+        console.log(maxHeight);
+        $(e.relatedTarget.$stage).find('.owl-item .item').css('height',maxHeight+'px');
+    }    
+
+    // Carousel for multi image posts
+    $('.facebook-feed-container .owl-carousel').owlCarousel({
+        loop:true,
+        dots: true,
+        nav:false,
+        items: 1,
+        onResized: updateSize,
+        onRefreshed: updateSize,
+    });
+
     // We lazy load the images so that we can determine their size when they load.
     $('.facebook-feed-container .owl-carousel .owl-item img').load(function() {
         $(this).parent().parent().parent().parent().parent().trigger('refresh.owl.carousel');

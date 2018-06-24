@@ -410,6 +410,7 @@ class Controller extends BlockController
     public function registerViewAssets($outputContent = '')
     {
         $this->requireAsset('container.player');
+        $this->requireAsset('owl.carousel');
     }
 
     protected function getAvailablePostSources()

@@ -272,10 +272,17 @@ class Controller extends Package
 
         // Owl Carousel
         $al->register(
-                'css', 'owl.carousel/css', array(
-                    'node_modules/owl.carousel/dist/assets/owl.carousel.min.css',
-                    'node_modules/owl.carousel/dist/assets/owl.theme.default.min.css',
-                ),
+                'css', 'owl.carousel/css/core',
+                'node_modules/owl.carousel/dist/assets/owl.carousel.min.css',
+                array(
+                    'version' => '2.2.0', 'position' => Asset::ASSET_POSITION_HEADER, 
+                    'minify' => true, 'combine' => false
+                ), $this
+        );
+
+        $al->register(
+                'css', 'owl.carousel/css/theme',
+                'node_modules/owl.carousel/dist/assets/owl.theme.default.min.css',
                 array(
                     'version' => '2.2.0', 'position' => Asset::ASSET_POSITION_HEADER, 
                     'minify' => true, 'combine' => false
@@ -293,7 +300,8 @@ class Controller extends Package
         $al->registerGroup(
             'owl.carousel',
             array(
-                array('css', 'owl.carousel/css'), 
+                array('css', 'owl.carousel/css/core'), 
+                array('css', 'owl.carousel/css/theme'), 
                 array('javascript', 'owl.carousel/js'),
                 array('javascript', 'jquery')
             )
