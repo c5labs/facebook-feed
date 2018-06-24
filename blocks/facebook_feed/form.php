@@ -46,7 +46,7 @@ defined('C5_EXECUTE') or die('Access Denied.');
     <div class="row">
         <div class="col-xs-12">
             <hr style="margin: 30px 0; display: block;">
-            Publicize to my <strong>Facebook Page</strong>:
+            Show posts from my <strong>Facebook Page</strong>:
         </div>
     </div>
     <div class="row">
