@@ -21,13 +21,19 @@ class Facebook extends DashboardPageController
     {
         $this->set('form', Core::make('helper/form'));
         $this->set('publicize_facebook', $this->manager->getConfigurationStore()->get('facebook'));
+        $this->set('callback_uri', $this->getCallbackUri());
+    }
+
+    protected function getCallbackUri()
+    {
+        return View::url('/dashboard/system/facebook_feed/facebook/exchange');
     }
 
     public function authorize()
     {
         if ($this->token->validate('authorize', $_POST['ccm_token'])) {
             $data = (array) $_POST['publicize_facebook'];
-            $data['callback_uri'] = View::url('/dashboard/system/facebook_feed/facebook/exchange');
+            $data['callback_uri'] = $this->getCallbackUri();
             $this->manager->getConfigurationStore()->put('facebook', $data);
             
             $this->manager->make('facebook', 'facebook-feed')->authorize(

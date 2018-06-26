@@ -8,6 +8,10 @@
     <div class="col-sm-12">
         <form action="<?php  echo $this->action('authorize'); ?>" method="POST">
             <?php echo $this->controller->token->output('authorize'); ?>
+             <div class="form-group" id="fileSets">
+                <?php echo $form->label('publicize_facebook[redirect_uri]', t('Facebook OAuth Redirect URI')); ?>
+                <input type="text" value="<?php echo $callback_uri; ?>" readonly class="form-control ccm-input-text">
+            </div>
             <div class="form-group" id="fileSets">
                 <?php echo $form->label('publicize_facebook[identifier]', t('Facebook Application ID')); ?>
                 <?php echo $form->text('publicize_facebook[identifier]', $publicize_facebook['identifier']); ?>
