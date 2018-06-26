@@ -214,6 +214,8 @@ class Controller extends Package
 
         parent::upgrade();
 
+        \Concrete\Core\Support\Facade\Application::clearCaches();
+
         // Add your custom logic here that needs to be executed AFTER package upgrade.
     }
 

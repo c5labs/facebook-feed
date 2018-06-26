@@ -16,6 +16,14 @@
     </field>
 
     <field name="object_id" type="string"></field>
+
+    <field name="post_source" type="string">
+      <default value="posts" />
+    </field>
+
+    <field name="max_items" type="integer">
+      <unsigned />
+    </field>
   </table>
 
 </schema>

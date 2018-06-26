@@ -25,11 +25,24 @@ defined('C5_EXECUTE') or die('Access Denied.');
 
     <div class="row">
         <div class="col-xs-12">
-            <p>Facebook wall allows you to show posts from a Facebook wall.</p>
+            <div class="card">
+                <label for="post_source">Post Source</label>
+                <?php echo $form->select('post_source', ['posts' => 'Posts', 'events' => 'Events'], $post_source); ?>
+            </div>
         </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="card">
+                <label for="max_items">Max Items</label>
+                <?php echo $form->text('max_items', $max_items, ['placeholder' => 'Number of items']); ?>
+            </div>
+        </div>
+    </div>
+    <div class="row">
         <div class="col-xs-12">
             <hr style="margin: 30px 0; display: block;">
-            Show posts from:
+            Show items from:
         </div>
     </div>
     <div class="row">

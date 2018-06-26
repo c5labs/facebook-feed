@@ -46,13 +46,24 @@ if (isset($no_configuration)) { ?>
     foreach ($posts as $post) { ?>
 
         <div class="facebook-feed-post <?php echo $post['type'] ?>">
-            <?php if ('video' === $post['type']) { ?>
+
+            <!-- Event !-->
+            <?php if ('event' === $post['type']) { ?>
+                <?php if (isset($post['cover']) && isset($post['cover']['source'])) { ?>
+                <img src="<?php echo $post['cover']['source'] ?>" alt="<?php echo $post['description'] or '' ?>">
+                <?php } ?>
+                <?php echo $post['description']; ?> 
+                
+            <!-- Video !-->
+            <?php } elseif ('video' === $post['type']) { ?>
                 <?php if (!empty($post['source'])) { ?>
                 <div class="video-wrapper">
                     <div class="video container-player" data-src="<?php echo $post['source']; ?>" data-cover="<?php echo $post['full_picture']; ?>"></div>
                     <div class="volume-control-wrapper"><i class="fa fa-volume-off fa-2x volume-control"></i></div>
                 </div>
                 <?php } ?>
+
+            <!-- Regular posts with many images !-->
             <?php } elseif (isset($post['parsed_images'])) { ?>
                 <div class="owl-carousel owl-theme">
                     <?php foreach ($post['parsed_images'] as $image) { ?>
@@ -62,11 +73,14 @@ if (isset($no_configuration)) { ?>
                     </div>
                     <?php } ?>
                 </div>
+
+            <!-- Regular post with single image !-->
             <?php } else { ?>
                 <?php if (isset($post['full_picture'])) { ?>
                     <img src="<?php echo $post['full_picture'] ?>" alt="<?php echo $post['message'] or '' ?>">
                 <?php } ?>
             <?php } ?>
+
             <?php if (isset($post['message'])) { ?>
                 <p style="<?php echo empty($post['full_picture']) ? 'font-size: 1.5em; line-height: 1.5em;' : '' ?>"><?php echo $post['message'] ?></p>
             <?php } ?>

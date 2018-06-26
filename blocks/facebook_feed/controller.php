@@ -441,71 +441,118 @@ class Controller extends BlockController
         return $cache_ttl;
     }
 
+    protected function linkify($string)
+    {
+        return preg_replace(
+              "~[[:alpha:]]+://[^<>[:space:]]+[[:alnum:]/]~",
+              "<a href=\"\\0\">\\0</a>", 
+              $string);
+    }
+
+    protected function parsePostImages($post)
+    {
+        $images = [];
+
+        if (isset($post['attachments']['data'][0]) && isset($post['attachments']['data'][0]['subattachments'])) {
+
+            $attachments = $post['attachments']['data'][0]['subattachments']['data'];
+
+            foreach ($attachments as $attachment) {
+                if ('photo' === $attachment['type']) {
+                    $images[] = $attachment['media']['image']['src'];
+                }
+            }
+
+            if (count($images) > 1) {
+                $post['parsed_images'] = $images;
+            }
+        }
+
+        return $image;
+    }
+
+    protected function processPost($post)
+    {
+        // Remove posts that we can't display.
+        if (empty($post['message']) && empty($post['full_picture'])) {
+            return false;
+        }
+
+        // Linkify
+        if (! empty($post['message'])) {
+            $post['message'] = $this->linkify($post['message']);
+        }
+
+        // Date
+        $post['human_date'] = with(new Carbon($post['created_time']))->diffForHumans();
+
+        // Move multiple images somewhere sensible.
+        $post['parsed_images'] = $this->parsePostImages($post);
+
+        return $post;
+    }
+
     protected function getPosts()
     {
         $expensiveCache = \Core::make('cache/expensive');
-        $postCacheItem = $expensiveCache->getItem('FacebookFeed/Posts' . $this->bID);
+        $postCacheItem = $expensiveCache->getItem('FacebookFeed/' . $this->post_source . $this->bID);
 
-        if ($postCacheItem->isMiss()) {
+        //dd($postCacheItem->isMiss());
+
+        if ($postCacheItem->isMiss() || !($feed = $postCacheItem->get())) {
 
             $provider = Core::make('authify.manager')->get('facebook-feed');
-            
-            $options =  [
-                'fields' => 'full_picture,message,name,created_time,link,source,type,object_id,attachments',
-            ];
 
-            // Get the pages that the user owns.
-            if ('me' === $this->object_id) {
-                $feed = $provider->getUserFeed($this->object_id, $options);
-            } else {
+            // Get the posts.
+            if ('posts' === $this->post_source) {
+                $options =  [
+                    'fields' => 'full_picture,message,name,created_time,link,source,type,object_id,attachments',
+                ];
+
                 $feed = $provider->request('https://graph.facebook.com/' . trim($this->object_id) . '/posts', $options);
+            } elseif ('events' === $this->post_source) {
+                $options =  [
+                    'fields' => 'cover,description,end_time,place,id,start_time,type',
+                ];
+
+                $feed = $provider->request('https://graph.facebook.com/' . trim($this->object_id) . '/events', $options);
+            } else {
+                return [];
             }
 
-            $posts = is_array($feed['data']) ? $feed['data'] : [];
+            $postCacheItem->set($feed, $this->getCacheTtl($provider)); 
+        }
 
-            // Format the posts
-            foreach ($posts as $k => $post) {
+        $posts = is_array($feed['data']) ? $feed['data'] : [];
 
-                // Remove posts that we can't display.
-                if (empty($posts[$k]['message']) && empty($posts[$k]['full_picture'])) {
-                    unset($posts[$k]);
+        // Format the posts
+        foreach ($posts as $k => $post) {
+            if ('events' === $this->post_source) {
+                $posts[$k]['event_type'] = $posts[$k]['type'];
+                $posts[$k]['type'] = 'event';
+                $posts[$k]['start_time'] = new \DateTime($posts[$k]['start_time']);
+                $posts[$k]['end_time'] = new \DateTime($posts[$k]['end_time']);
+
+                // Format the display date.
+                if ($posts[$k]['start_time']->format('d/m/Y') === $posts[$k]['end_time']->format('d/m/Y')) {
+                    $posts[$k]['human_date'] = $posts[$k]['start_time']->format('jS M');
+                } elseif ($posts[$k]['start_time']->format('m') === $posts[$k]['end_time']->format('m')) {
+                    $posts[$k]['human_date'] = $posts[$k]['start_time']->format('jS') . ' - ' . $posts[$k]['end_time']->format('jS M');
+                } else {
+                    $posts[$k]['human_date'] = $posts[$k]['start_time']->format('jS M') . ' - ' . $posts[$k]['end_time']->format('jS M');
+                }
+
+            } else {
+                if (!($posts[$k] = $this->processPost($post))) {
                     continue;
                 }
-
-                // Linkify
-                if (! empty($posts[$k]['message'])) {
-                    $posts[$k]['message'] = preg_replace(
-                      "~[[:alpha:]]+://[^<>[:space:]]+[[:alnum:]/]~",
-                      "<a href=\"\\0\">\\0</a>", 
-                      $posts[$k]['message']);
-                }
-
-                // Date
-                $posts[$k]['human_date'] = with(new Carbon($post['created_time']))->diffForHumans();
-
-                // Move multiple images somewhere sensible.
-                if (isset($posts[$k]['attachments']['data'][0]) && isset($posts[$k]['attachments']['data'][0]['subattachments'])) {
-                    $images = [];
-
-                    $attachments = $posts[$k]['attachments']['data'][0]['subattachments']['data'];
-
-                    foreach ($attachments as $attachment) {
-                        if ('photo' === $attachment['type']) {
-                            $images[] = $attachment['media']['image']['src'];
-                        }
-                    }
-
-                    if (count($images) > 1) {
-                        $posts[$k]['parsed_images'] = $images;
-                    }
-                }
             }
+        }
 
-            $posts = array_values($posts);
+        $posts = array_values($posts);
 
-            $postCacheItem->set($posts, $this->getCacheTtl($provider)); 
-        } else {
-            $posts = $postCacheItem->get();
+        if (intval($this->max_items) > 0) {
+            $posts = array_slice($posts, 0, $this->max_items);
         }
 
         return $posts;
