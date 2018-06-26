@@ -512,7 +512,7 @@ class Controller extends BlockController
                 $feed = $provider->request('https://graph.facebook.com/' . trim($this->object_id) . '/posts', $options);
             } elseif ('events' === $this->post_source) {
                 $options =  [
-                    'fields' => 'cover,description,end_time,place,id,start_time,type',
+                    'fields' => 'cover,name,description,end_time,place,id,start_time,type',
                 ];
 
                 $feed = $provider->request('https://graph.facebook.com/' . trim($this->object_id) . '/events', $options);
@@ -528,6 +528,7 @@ class Controller extends BlockController
         // Format the posts
         foreach ($posts as $k => $post) {
             if ('events' === $this->post_source) {
+                $posts[$k]['message'] = $posts[$k]['description'];
                 $posts[$k]['event_type'] = $posts[$k]['type'];
                 $posts[$k]['type'] = 'event';
                 $posts[$k]['start_time'] = new \DateTime($posts[$k]['start_time']);

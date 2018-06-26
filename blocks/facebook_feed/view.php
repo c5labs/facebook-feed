@@ -52,7 +52,7 @@ if (isset($no_configuration)) { ?>
                 <?php if (isset($post['cover']) && isset($post['cover']['source'])) { ?>
                 <img src="<?php echo $post['cover']['source'] ?>" alt="<?php echo $post['description'] or '' ?>">
                 <?php } ?>
-                <?php echo $post['description']; ?> 
+                <h3><?php echo $post['name']; ?> </h3>
                 
             <!-- Video !-->
             <?php } elseif ('video' === $post['type']) { ?>
