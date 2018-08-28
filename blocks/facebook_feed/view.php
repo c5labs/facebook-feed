@@ -53,31 +53,36 @@ if (isset($no_configuration)) { ?>
                 <img src="<?php echo $post['cover']['source'] ?>" alt="<?php echo $post['description'] or '' ?>">
                 <?php } ?>
                 <h3><?php echo $post['name']; ?> </h3>
-                
-            <!-- Video !-->
-            <?php } elseif ('video' === $post['type']) { ?>
-                <?php if (!empty($post['source'])) { ?>
-                <div class="video-wrapper">
-                    <div class="video container-player" data-src="<?php echo $post['source']; ?>" data-cover="<?php echo $post['full_picture']; ?>"></div>
-                    <div class="volume-control-wrapper"><i class="fa fa-volume-off fa-2x volume-control"></i></div>
-                </div>
-                <?php } ?>
+                <span class="post-meta"><?php echo $post['human_date'] ?></span>
+                <?php echo $post['description']; ?>
 
-            <!-- Regular posts with many images !-->
-            <?php } elseif (isset($post['parsed_images'])) { ?>
-                <div class="owl-carousel owl-theme">
-                    <?php foreach ($post['parsed_images'] as $image) { ?>
-                    <div class="item">
-                        <div style="background-image: url(<?php echo $image; ?>);"></div>
-                        <img data-src="<?php echo $image; ?>" src="#">
+            <?php } else { ?>
+                
+                <!-- Video !-->
+                <?php if ('video' === $post['type']) { ?>
+                    <?php if (!empty($post['source'])) { ?>
+                    <div class="video-wrapper">
+                        <div class="video container-player" data-src="<?php echo $post['source']; ?>" data-cover="<?php echo $post['full_picture']; ?>"></div>
+                        <div class="volume-control-wrapper"><i class="fa fa-volume-off fa-2x volume-control"></i></div>
                     </div>
                     <?php } ?>
-                </div>
 
-            <!-- Regular post with single image !-->
-            <?php } else { ?>
-                <?php if (isset($post['full_picture'])) { ?>
-                    <img src="<?php echo $post['full_picture'] ?>" alt="<?php echo $post['message'] or '' ?>">
+                <!-- Regular posts with many images !-->
+                <?php } elseif (isset($post['parsed_images'])) { ?>
+                    <div class="owl-carousel owl-theme">
+                        <?php foreach ($post['parsed_images'] as $image) { ?>
+                        <div class="item">
+                            <div style="background-image: url(<?php echo $image; ?>);"></div>
+                            <img data-src="<?php echo $image; ?>" src="#">
+                        </div>
+                        <?php } ?>
+                    </div>
+
+                <!-- Regular post with single image !-->
+                <?php } else { ?>
+                    <?php if (isset($post['full_picture'])) { ?>
+                        <img src="<?php echo $post['full_picture'] ?>" alt="<?php echo $post['message'] or '' ?>">
+                    <?php } ?>
                 <?php } ?>
             <?php } ?>
 
