@@ -418,7 +418,7 @@ class Controller extends BlockController
         $provider = Core::make('authify.manager')->get('facebook-feed');
         
         // Get the pages that the user owns.
-        $pages = $provider->getUserPages(['fields' => 'category,name,id,perms,picture']);
+        $pages = $provider->getUserPages(['fields' => 'category,name,id,picture']);
         
         // Get the user.
         $user = $provider->getResourceOwner();
