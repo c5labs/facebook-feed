@@ -495,9 +495,8 @@ class Controller extends BlockController
     protected function getPosts()
     {
         $expensiveCache = \Core::make('cache/expensive');
-        $postCacheItem = $expensiveCache->getItem('FacebookFeed/' . $this->post_source . $this->bID);
-
-        //dd($postCacheItem->isMiss());
+        $key = md5($this->post_source . $this->bID . $this->object_id);
+        $postCacheItem = $expensiveCache->getItem('FacebookFeed/' . $key);
 
         if ($postCacheItem->isMiss() || !($feed = $postCacheItem->get())) {
 
@@ -520,7 +519,15 @@ class Controller extends BlockController
                 return [];
             }
 
-            $postCacheItem->set($feed, $this->getCacheTtl($provider)); 
+            // Version 8.x.
+            if (method_exists($expensiveCache, 'save')) {
+                $expensiveCache->save($postCacheItem->set($feed)->expiresAfter(300));
+            }
+
+            // Version 5.7.x.
+            else {
+                $postCacheItem->set($feed, $this->getCacheTtl($provider)); 
+            }
         }
 
         $posts = is_array($feed['data']) ? $feed['data'] : [];
@@ -528,7 +535,6 @@ class Controller extends BlockController
         // Format the posts
         foreach ($posts as $k => $post) {
             if ('events' === $this->post_source) {
-                $posts[$k]['message'] = $posts[$k]['description'];
                 $posts[$k]['event_type'] = $posts[$k]['type'];
                 $posts[$k]['type'] = 'event';
                 $posts[$k]['start_time'] = new \DateTime($posts[$k]['start_time']);
